@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrettyCool Control Center</title>
+    <!-- CSS principal com a identidade visual desejada -->
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <!-- Cabeçalho fixo com identidade visual e área de status global -->
+    <header class="topbar">
+      <div class="branding">
+        <!-- Espaços reservados para as marcas oficiais. As imagens reais devem ser copiadas para app/static/img/. -->
+        <img
+          src="/static/img/logo.png"
+          alt="Logotipo Unidade 37"
+          class="brand-logo"
+          onerror="this.classList.add('hidden')"
+        />
+        <img
+          src="/static/img/unidade.png"
+          alt="Unidade 37"
+          class="brand-lockup"
+          onerror="this.classList.add('hidden')"
+        />
+        <div class="brand-text">
+          <h1>PrettyCool Control Center</h1>
+          <span>Orquestração de Reconhecimento Ofensivo</span>
+        </div>
+      </div>
+      <div class="status-banner" id="status-area">Pronto para executar</div>
+    </header>
+
+    <main class="layout">
+      <!-- Navegação lateral em abas para organizar as áreas da aplicação -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <span class="sidebar-title">Navegação</span>
+          <button class="tab-button active" data-tab-target="overview">Visão geral</button>
+          <button class="tab-button" data-tab-target="execution">Execução</button>
+          <button class="tab-button" data-tab-target="config">Configurações</button>
+          <button class="tab-button" data-tab-target="console">Mode Console</button>
+          <button class="tab-button" data-tab-target="results">Resultados</button>
+        </div>
+      </aside>
+
+      <!-- Área principal que abriga os painéis individuais -->
+      <section class="content-area">
+        <!-- Painel de visão geral com indicadores rápidos e instruções -->
+        <div class="tab-panel active" data-tab="overview">
+          <div class="panel-header">
+            <h2>Status Operacional</h2>
+            <p>
+              Este painel apresenta um resumo da plataforma e orientações iniciais para novos operadores. As métricas são
+              atualizadas automaticamente conforme os módulos são carregados pelo backend.
+            </p>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span>Módulos disponíveis</span>
+              <strong id="module-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span>Categorias orquestradas</span>
+              <strong id="category-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span>Bundles prontos</span>
+              <strong id="bundle-count">0</strong>
+            </div>
+          </div>
+          <div class="callout">
+            <h3>Fluxo recomendado</h3>
+            <ol>
+              <li>Configure as credenciais necessárias em <strong>Configurações &gt; API Keys</strong>.</li>
+              <li>Informe o alvo e escolha o modo de execução em <strong>Execução</strong>.</li>
+              <li>Acompanhe logs em tempo real utilizando o <strong>Mode Console</strong>.</li>
+              <li>Revise os resultados estruturados e faça o download do relatório Markdown em <strong>Resultados</strong>.</li>
+            </ol>
+          </div>
+          <div class="overview-list">
+            <h3>Catálogo de módulos por categoria</h3>
+            <ul id="overview-category-list"></ul>
+          </div>
+        </div>
+
+        <!-- Painel de execução principal -->
+        <div class="tab-panel" data-tab="execution">
+          <div class="panel-header">
+            <h2>Orquestração de Recon</h2>
+            <p>Defina o alvo, selecione o modo desejado e dispare os módulos alinhados à operação.</p>
+          </div>
+
+          <form class="execution-form" onsubmit="return false;">
+            <div class="field-group">
+              <label for="target-input">Domínio ou host alvo</label>
+              <input type="text" id="target-input" placeholder="ex: unidade37.com.br" />
+            </div>
+
+            <!-- Seleção do modo de execução (todas, por categoria, personalizado) -->
+            <div class="field-group">
+              <span class="field-label">Modo de execução</span>
+              <div class="mode-selector">
+                <label class="mode-option">
+                  <input type="radio" name="execution-mode" value="all" checked />
+                  <div>
+                    <strong>Pipeline completo</strong>
+                    <span>Executa todos os módulos disponíveis em sequência.</span>
+                  </div>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="execution-mode" value="bundle" />
+                  <div>
+                    <strong>Categoria</strong>
+                    <span>Rode rapidamente um conjunto pré-definido de módulos por categoria.</span>
+                  </div>
+                </label>
+                <label class="mode-option">
+                  <input type="radio" name="execution-mode" value="custom" />
+                  <div>
+                    <strong>Personalizado</strong>
+                    <span>Monte um pacote sob medida selecionando módulos individuais.</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Painel auxiliar exibido quando o modo selecionado exige parâmetros -->
+            <div class="mode-panels">
+              <div class="mode-panel" data-mode-panel="bundle">
+                <h3>Escolha uma categoria</h3>
+                <p class="panel-hint">Selecione uma categoria para executar o bundle correspondente.</p>
+                <div class="bundle-list" id="bundle-list"></div>
+              </div>
+
+              <div class="mode-panel" data-mode-panel="custom">
+                <div class="mode-panel-header">
+                  <h3>Módulos personalizados</h3>
+                  <button type="button" class="ghost" id="clear-selection">Limpar seleção</button>
+                </div>
+                <p class="panel-hint">
+                  Marque os módulos desejados. Utilize o botão de atalho para executar um módulo individual imediatamente quando
+                  necessário.
+                </p>
+                <div class="custom-modules" id="custom-modules"></div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary" id="run-primary" type="button">Iniciar execução</button>
+            </div>
+            <p class="report-link" id="report-link"></p>
+          </form>
+        </div>
+
+        <!-- Painel de configuração das chaves e parâmetros -->
+        <div class="tab-panel" data-tab="config">
+          <div class="panel-header">
+            <h2>Configuração de API Keys</h2>
+            <p>As credenciais são armazenadas localmente em <code>config/settings.json</code> e podem ser atualizadas a qualquer momento.</p>
+          </div>
+          <form id="api-form" class="config-form">
+            <div class="api-key-grid" id="api-key-grid"></div>
+            <div class="field-group">
+              <label for="timeout-input">Timeout padrão (segundos)</label>
+              <input type="text" id="timeout-input" placeholder="30" />
+            </div>
+            <div class="actions">
+              <button class="primary" type="submit">Salvar alterações</button>
+              <button class="ghost" type="button" id="reset-api-form">Limpar campos</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Painel do modo console com instruções -->
+        <div class="tab-panel" data-tab="console">
+          <div class="panel-header">
+            <h2>Mode Console</h2>
+            <p>
+              Interface emulando um terminal Linux. Os comandos são os mesmos do utilitário CLI, permitindo reproduzir execuções de
+              módulos, bundles ou do pipeline completo.
+            </p>
+          </div>
+          <div class="callout">
+            <h3>Comandos úteis</h3>
+            <ul>
+              <li><code>list modules</code> &mdash; Lista módulos registrados.</li>
+              <li><code>run module shodan --target exemplo.com</code> &mdash; Executa um módulo individual.</li>
+              <li><code>run bundle discovery --target exemplo.com</code> &mdash; Executa uma categoria completa.</li>
+              <li><code>run all --target exemplo.com</code> &mdash; Executa todos os módulos disponíveis.</li>
+            </ul>
+            <p>Utilize <code>help</code> para ver todos os comandos suportados pelo console.</p>
+          </div>
+          <div class="console-wrapper">
+            <label for="console-input" class="field-label">Comando</label>
+            <textarea id="console-input" placeholder="Digite um comando"></textarea>
+            <div class="actions">
+              <button class="primary" id="console-run" type="button">Executar comando</button>
+              <button class="ghost" id="console-clear" type="button">Limpar saída</button>
+            </div>
+            <div class="console-output" id="console-output">Console pronto.</div>
+          </div>
+        </div>
+
+        <!-- Painel dos resultados exibidos após execuções -->
+        <div class="tab-panel" data-tab="results">
+          <div class="panel-header">
+            <h2>Resultados consolidados</h2>
+            <p>Os dados retornados pelos módulos selecionados são apresentados de forma estruturada para análise rápida.</p>
+          </div>
+          <div class="results-container" id="results-container"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      PrettyCool &mdash; Unidade 37 &bull; Plataforma corporativa de reconhecimento ofensivo
+    </footer>
+
+    <!-- JavaScript responsável por carregar módulos, gerenciar execuções e atualizar a UI -->
+    <script src="/static/js/app.js" defer></script>
+  </body>
+</html>
