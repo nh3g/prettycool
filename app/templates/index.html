@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrettyCool Control Center</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="branding">
+        <!-- Espaço reservado para a logo oficial (adicione /static/img/logo.png quando disponível) -->
+        <img src="/static/img/logo.png" alt="Logotipo Unidade 37" onerror="this.style.display='none'" />
+        <div class="title">
+          <h1>PrettyCool Control Center</h1>
+          <span>Automação de reconhecimento ofensivo - Unidade 37</span>
+        </div>
+      </div>
+      <div class="status-area" id="status-area">Pronto para executar</div>
+    </header>
+
+    <main>
+      <nav>
+        <h2>Módulos</h2>
+        <div id="modules-list"></div>
+      </nav>
+
+      <section class="content">
+        <div class="card" id="execution-card">
+          <h2>Execução de Recon</h2>
+          <p class="description">
+            Defina o alvo e selecione os módulos desejados. É possível executar um módulo individual,
+            um conjunto específico ou todo o fluxo de reconhecimento.
+          </p>
+          <label for="target-input">Domínio / Host alvo</label>
+          <input type="text" id="target-input" placeholder="ex: empresa.com" />
+          <div class="buttons">
+            <button class="primary" id="run-selected">Executar módulos selecionados</button>
+            <button class="secondary" id="run-all">Executar todos os módulos</button>
+          </div>
+          <div class="bundle-buttons" id="bundle-buttons"></div>
+          <p class="description" id="report-link"></p>
+        </div>
+
+        <div class="card" id="api-card">
+          <h2>Configuração de API Keys</h2>
+          <p class="description">
+            Armazene as credenciais necessárias para cada integração. Os valores ficam em arquivo local e podem ser atualizados a qualquer momento.
+          </p>
+          <form id="api-form">
+            <div class="api-key-grid" id="api-key-grid"></div>
+            <label for="timeout-input">Timeout padrão (segundos)</label>
+            <input type="text" id="timeout-input" placeholder="30" />
+            <div class="buttons">
+              <button class="primary" type="submit">Salvar alterações</button>
+              <button class="secondary" type="button" id="reset-api-form">Limpar campos</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card" id="console-card">
+          <h2>Mode Console</h2>
+          <p class="description">
+            Interface em modo terminal para operadores avançados. Os comandos espelham a execução via CLI.
+          </p>
+          <div class="instructions">
+            <strong>Exemplos rápidos:</strong>
+            <ul>
+              <li><code>run module shodan --target exemplo.com</code></li>
+              <li><code>run bundle discovery --target exemplo.com</code></li>
+              <li><code>run all --target exemplo.com</code></li>
+            </ul>
+            <p>Use <code>list modules</code> para visualizar todos os módulos disponíveis.</p>
+          </div>
+          <div class="console-wrapper">
+            <textarea id="console-input" placeholder="Digite um comando"></textarea>
+            <div class="buttons">
+              <button class="primary" id="console-run">Executar comando</button>
+              <button class="secondary" id="console-clear">Limpar saída</button>
+            </div>
+            <div class="console-output" id="console-output">Console pronto.</div>
+          </div>
+        </div>
+
+        <div class="card" id="results-card">
+          <h2>Resultados</h2>
+          <p class="description">Os dados retornados pelos módulos selecionados serão apresentados abaixo.</p>
+          <div class="results-container" id="results-container"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      PrettyCool &mdash; Unidade 37 &bull; Plataforma de Reconhecimento Automatizado
+    </footer>
+
+    <script src="/static/js/app.js" defer></script>
+  </body>
+</html>
